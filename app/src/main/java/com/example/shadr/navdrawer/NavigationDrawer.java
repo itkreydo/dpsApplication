@@ -27,7 +27,7 @@ public class NavigationDrawer extends AppCompatActivity
 //Состав команды
 //Dima  pidr
 //Igor pidr
-    //hol
+    //hol xyu
     FragmentGallery fgallery;
     FragmentImport fimport;
     FragmentSend fsend;
