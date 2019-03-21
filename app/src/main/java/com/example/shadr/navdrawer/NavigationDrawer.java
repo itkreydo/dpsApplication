@@ -24,7 +24,7 @@ import com.example.shadr.navdrawer.fragment.FragmentTools;
 
 public class NavigationDrawer extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-//Doma pidr
+//Dima  pidr
     FragmentGallery fgallery;
     FragmentImport fimport;
     FragmentSend fsend;
