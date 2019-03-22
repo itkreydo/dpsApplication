@@ -27,8 +27,8 @@ public class NavigationDrawer extends AppCompatActivity
 //Igor pidr
     //hol xyu
     FragmentGallery fgallery;
-    FragmentDialog fimport;
-    FragmentSettings fslideshow;
+    FragmentDialog fdialogs;
+    FragmentSettings fsettings;
 
     FragmentTransaction ftrans;
 
@@ -38,7 +38,8 @@ public class NavigationDrawer extends AppCompatActivity
         setContentView(R.layout.activity_navigation_drawer);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        //getSupportActionBar().setDisplayShowTitleEnabled(false);
         //getSupportActionBar().hide();
 
         final ConstraintLayout content = findViewById(R.id.container);
@@ -53,8 +54,8 @@ public class NavigationDrawer extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         fgallery = new FragmentGallery();
-        fimport = new FragmentDialog();
-        fslideshow = new FragmentSettings();
+        fdialogs = new FragmentDialog();
+        fsettings = new FragmentSettings();
 
         ftrans = getSupportFragmentManager().beginTransaction();
         ftrans.replace(R.id.container, fgallery);
@@ -62,8 +63,6 @@ public class NavigationDrawer extends AppCompatActivity
 
 
         //Для кнопки выйти красным
-
-
         //setTextColorForMenuItem(navigationView.getMenu().getItem(0), R.color.colorAccent);
     }
 
@@ -80,7 +79,7 @@ public class NavigationDrawer extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.navigation_drawer, menu);
+        getMenuInflater().inflate(R.menu.navigation_drawer, menu);
         return true;
     }
 
@@ -92,8 +91,12 @@ public class NavigationDrawer extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_map) {
+            ftrans = getSupportFragmentManager().beginTransaction();
+            ftrans.replace(R.id.container, fgallery);
+            ftrans.commit();
             return true;
+
         }
 
         return super.onOptionsItemSelected(item);
@@ -108,13 +111,13 @@ public class NavigationDrawer extends AppCompatActivity
         ftrans = getSupportFragmentManager().beginTransaction();
         if (id == R.id.nav_dialogs) {
             getSupportActionBar().setTitle("Диалоги");
-            ftrans.replace(R.id.container, fimport);
+            ftrans.replace(R.id.container, fdialogs);
         } else if (id == R.id.nav_map) {
 
             ftrans.replace(R.id.container, fgallery);
         } else if (id == R.id.nav_settings) {
-            getSupportActionBar().setTitle("Диалоги");
-            ftrans.replace(R.id.container, fslideshow);
+            getSupportActionBar().setTitle("Настройки");
+            ftrans.replace(R.id.container, fsettings);
         } else if (id == R.id.nav_exit) {
 
             //ftrans.replace(R.id.container, ftools);

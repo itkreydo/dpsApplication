@@ -12,7 +12,10 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@drawable/side_nav_bar_new"
-        app:popupTheme="@style/AppTheme.PopupOverlay" />
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:popupTheme="@style/AppTheme.PopupOverlay" >
+
+    </android.support.v7.widget.Toolbar>
 
     <include layout="@layout/content_navigation_drawer" />
 

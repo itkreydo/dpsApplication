@@ -19,8 +19,13 @@
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
 
     </style>
+    <style name="ActionBar" parent="Theme.AppCompat">
+        <item name="android:titleTextStyle">@style/ActionBar.TitleTextStyle</item>
+    </style>
 
-
+    <style name="ActionBar.TitleTextStyle" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textColor">@android:color/white</item>
+    </style>
     <style name="DrawerHamburgerStyle" parent="@style/Widget.AppCompat.DrawerArrowToggle">
         <item name="spinBars">true</item>
         <item name="color">@color/HamburgerColor</item>

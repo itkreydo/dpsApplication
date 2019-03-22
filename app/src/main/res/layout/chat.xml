@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#999999" >
+    android:layout_marginTop="@dimen/toolbar_height"
+    android:background="#EBEBEB" >
 
     <ListView
         android:id="@+id/lv"
@@ -26,16 +27,19 @@
             android:layout_height="wrap_content"
             android:layout_gravity="top"
             android:layout_weight="1"
+            android:hint="Введите ваше сообщение"
             android:ems="10" >
         </EditText>
 
         <Button
             android:id="@+id/bt"
-            android:layout_width="50dp"
-            android:layout_height="wrap_content"
+            android:layout_width="58dp"
             android:layout_gravity="top"
             android:onClick="send"
-            android:text=">" />
+            android:layout_height="wrap_content"
+            android:text=">"
+            />
+        <!--android:background="@drawable/ic_menu_send"-->
     </LinearLayout>
 
 </RelativeLayout>
