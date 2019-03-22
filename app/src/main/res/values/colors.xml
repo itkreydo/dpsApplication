@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorPrimary">#1D83D1</color>
+    <color name="colorPrimaryDark">#546B80</color>
+    <color name="colorStatusBarMap">#4CAF50</color>
+    <color name="colorToolbar">#2196F3</color>
     <color name="colorAccent">#D81B60</color>
+    <color name="HamburgerColor">#FFFFFF</color>
+    <color name="nav_exit">#E65050</color>
 </resources>

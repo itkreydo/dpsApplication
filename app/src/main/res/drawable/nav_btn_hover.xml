@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <bitmap
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:gravity="top|left"
+            android:alpha="0.7"
+            android:src="@mipmap/ic_ham_pressed">
+        </bitmap>
+    </item> <!-- pressed -->
+    <!--Кнопка гамбургера настройка при нажатии -->
+
+    <item >
+        <bitmap
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:gravity="top|left"
+            android:alpha="0.7"
+            android:src="@mipmap/ic_mymenu">
+        </bitmap>
+    </item><!-- default -->
+</selector>

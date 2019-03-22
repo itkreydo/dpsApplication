@@ -18,9 +18,10 @@
         android:id="@+id/menuswitch"
         android:layout_width="48dp"
         android:layout_height="48dp"
+        android:layout_gravity="top|left"
         android:layout_margin="5dp"
-        android:background="@mipmap/ic_mymenu" />
-
+        android:background ="@drawable/nav_btn_hover"
+        />
     <LinearLayout
         android:id="@+id/buttons_map"
         android:layout_width="wrap_content"

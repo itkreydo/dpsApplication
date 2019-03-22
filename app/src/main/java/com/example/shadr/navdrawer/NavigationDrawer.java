@@ -1,11 +1,12 @@
 package com.example.shadr.navdrawer;
 
 import android.os.Bundle;
+import android.support.annotation.ColorRes;
 import android.support.constraint.ConstraintLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
-import android.view.View;
+import android.support.v4.content.ContextCompat;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -15,12 +16,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.shadr.navdrawer.fragment.FragmentDialog;
 import com.example.shadr.navdrawer.fragment.FragmentGallery;
-import com.example.shadr.navdrawer.fragment.FragmentImport;
-import com.example.shadr.navdrawer.fragment.FragmentSend;
-import com.example.shadr.navdrawer.fragment.FragmentShare;
-import com.example.shadr.navdrawer.fragment.FragmentSlideshow;
-import com.example.shadr.navdrawer.fragment.FragmentTools;
+import com.example.shadr.navdrawer.fragment.FragmentSettings;
 
 public class NavigationDrawer extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -29,11 +27,8 @@ public class NavigationDrawer extends AppCompatActivity
 //Igor pidr
     //hol xyu
     FragmentGallery fgallery;
-    FragmentImport fimport;
-    FragmentSend fsend;
-    FragmentShare fshare;
-    FragmentSlideshow fslideshow;
-    FragmentTools ftools;
+    FragmentDialog fimport;
+    FragmentSettings fslideshow;
 
     FragmentTransaction ftrans;
 
@@ -44,9 +39,7 @@ public class NavigationDrawer extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        getSupportActionBar().hide();
-
-
+        //getSupportActionBar().hide();
 
         final ConstraintLayout content = findViewById(R.id.container);
 
@@ -60,15 +53,18 @@ public class NavigationDrawer extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         fgallery = new FragmentGallery();
-        fimport = new FragmentImport();
-        fsend = new FragmentSend();
-        fshare = new FragmentShare();
-        fslideshow = new FragmentSlideshow();
-        ftools = new FragmentTools();
+        fimport = new FragmentDialog();
+        fslideshow = new FragmentSettings();
 
         ftrans = getSupportFragmentManager().beginTransaction();
         ftrans.replace(R.id.container, fgallery);
         ftrans.commit();
+
+
+        //Для кнопки выйти красным
+
+
+        //setTextColorForMenuItem(navigationView.getMenu().getItem(0), R.color.colorAccent);
     }
 
     @Override
@@ -110,23 +106,29 @@ public class NavigationDrawer extends AppCompatActivity
         int id = item.getItemId();
 
         ftrans = getSupportFragmentManager().beginTransaction();
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_dialogs) {
+            getSupportActionBar().setTitle("Диалоги");
             ftrans.replace(R.id.container, fimport);
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_map) {
+
             ftrans.replace(R.id.container, fgallery);
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_settings) {
+            getSupportActionBar().setTitle("Диалоги");
             ftrans.replace(R.id.container, fslideshow);
-        } else if (id == R.id.nav_manage) {
-            ftrans.replace(R.id.container, ftools);
-        } else if (id == R.id.nav_share) {
-            ftrans.replace(R.id.container, fshare);
-        } else if (id == R.id.nav_send) {
-            ftrans.replace(R.id.container, fsend);
+        } else if (id == R.id.nav_exit) {
+
+            //ftrans.replace(R.id.container, ftools);
         }
         ftrans.commit();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+    //Для кнопки Выйти
+    private void setTextColorForMenuItem(MenuItem menuItem, @ColorRes int color) {
+        SpannableString spanString = new SpannableString(menuItem.getTitle().toString());
+        spanString.setSpan(new ForegroundColorSpan(ContextCompat.getColor(this, color)), 0, spanString.length(), 0);
+        menuItem.setTitle(spanString);
     }
 }

@@ -7,18 +7,15 @@
     tools:context=".NavigationDrawer">
 
 
-
-
-
-
-
-    <include layout="@layout/content_navigation_drawer" />
-
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@android:color/transparent"
+        android:background="@drawable/side_nav_bar_new"
         app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    <include layout="@layout/content_navigation_drawer" />
+
+
 
 </android.support.design.widget.CoordinatorLayout>
