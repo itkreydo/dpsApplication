@@ -43,8 +43,8 @@ public class MessageAdapter extends BaseAdapter {
     }
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View view = convertView;
-        //View view = null;
+        //View view = convertView;
+        View view = null;
         Message message = (Message) getItem(position);
         //Если нет свободный вью, то создаём новый
         if (view == null) {
