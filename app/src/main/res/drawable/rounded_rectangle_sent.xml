@@ -2,9 +2,9 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle" >
 
-    <!-- View background color -->
+    <!-- View background color android:color="#74BE6F"-->
     <solid
-        android:color="#74BE6F" >
+        android:color="@color/colorMessageSentBackground" >
     </solid>
 
     <!-- The radius makes the corners rounded -->

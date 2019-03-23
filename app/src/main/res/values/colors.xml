@@ -7,4 +7,13 @@
     <color name="colorAccent">#D81B60</color>
     <color name="HamburgerColor">#FFFFFF</color>
     <color name="nav_exit">#E65050</color>
+<!--Цвета сообщений-->
+    <!--Доп цвета-->
+    <color name="colorMessageSentBackgroundBlue">#CAD9F0</color>
+    <color name="colorMessageSentBackgroundGreen">#B2E7B9</color>
+    <!--Основыне цвета-->
+    <color name="colorMessageText">#2B2B2B</color>
+    <color name="colorMessageSentBackground">@color/colorMessageSentBackgroundBlue</color>
+    <color name="colorMessageRecievedBackground">#F7F7F7</color>
+
 </resources>

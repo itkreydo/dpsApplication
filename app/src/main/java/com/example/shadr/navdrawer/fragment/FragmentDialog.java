@@ -10,6 +10,9 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
 import com.example.shadr.navdrawer.R;
+import com.example.shadr.navdrawer.MessageAdapter;
+import com.example.shadr.navdrawer.models.Message;
+import com.example.shadr.navdrawer.models.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,13 +36,11 @@ public class FragmentDialog extends Fragment {
     private String mParam1;
     private String mParam2;
     // имена атрибутов для Map
-    final String ATTRIBUTE_NAME_TEXT = "text";
-    final String ATTRIBUTE_NAME_IMAGE = "image";
-    final String ATTRIBUTE_MESSAGE_BODY = "body";
     ListView lvSimple;
     SimpleAdapter sAdapter;
-    ArrayList<Map<String, Object>> data;
-    Map<String, Object> m;
+    MessageAdapter mAdapter;
+    ArrayList<Message> messagesData;
+    Message m;
     private OnFragmentInteractionListener mListener;
 
     public FragmentDialog() {
@@ -71,23 +72,22 @@ public class FragmentDialog extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        // упаковываем данные в понятную для адаптера структуру
-        data = new ArrayList<Map<String, Object>>();
+
+        // упаковываем данные в понятную для адаптера структуру сообщений
+        messagesData = new ArrayList<Message>();
+
+        //Генерируем сообщения, потом будем брать из бд
         for (int i = 1; i < 5; i++) {
-            m = new HashMap<String, Object>();
-            m.put(ATTRIBUTE_NAME_TEXT, "Имя Фамилия " + i);
-            m.put(ATTRIBUTE_MESSAGE_BODY, "Какой-то текст бла бла Какой-то текст бла бла Какой-то текст бла бла " + i);
-            m.put(ATTRIBUTE_NAME_IMAGE, "20:2"+i);
-            data.add(m);
+            User u = new User();
+            u.setNickname("Иванов Иван "+i);
+            int type = (i==2) ? Message.TYPE_MESSAGE_SENT : Message.TYPE_MESSAGE_RECEIVED;
+            m = new Message("Ваш текст для теста Проверка текста. но и не только. Всё, хз что писать!", u, type);
+            messagesData.add(m);
         }
 
-        // массив имен атрибутов, из которых будут читаться данные
-        String[] from = { ATTRIBUTE_NAME_TEXT,ATTRIBUTE_MESSAGE_BODY ,ATTRIBUTE_NAME_IMAGE };
-        // массив ID View-компонентов, в которые будут вставлять данные
-        int[] to = { R.id.text_message_name, R.id.text_message_body,R.id.text_message_time };
 
-        // создаем адаптер
-        sAdapter = new SimpleAdapter(getContext(), data, R.layout.item_message_received, from, to);
+        //Создаем свой кастомизированный адаптер
+        mAdapter = new MessageAdapter(getContext(), messagesData);
 
         // определяем список и присваиваем ему адаптер
 
@@ -98,7 +98,8 @@ public class FragmentDialog extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.chat, container, false);
         lvSimple = (ListView) v.findViewById(R.id.lv);
-        lvSimple.setAdapter(sAdapter);
+        lvSimple.setDivider(null);
+        lvSimple.setAdapter(mAdapter);
         // Inflate the layout for this fragment
         return v;
 
