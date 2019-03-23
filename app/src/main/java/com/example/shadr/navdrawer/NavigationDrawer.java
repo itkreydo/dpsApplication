@@ -37,6 +37,7 @@ public class NavigationDrawer extends AppCompatActivity
 
     FragmentTransaction ftrans;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
