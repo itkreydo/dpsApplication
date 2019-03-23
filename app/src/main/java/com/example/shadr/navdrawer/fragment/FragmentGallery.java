@@ -3,7 +3,10 @@ package com.example.shadr.navdrawer.fragment;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -30,11 +33,13 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewManager;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.shadr.navdrawer.NavigationDrawer;
@@ -46,6 +51,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -80,6 +86,8 @@ public class FragmentGallery extends Fragment implements OnMapReadyCallback {
     SupportMapFragment mapFragment;
     GoogleMap map;
 
+    Bitmap marker_picture;
+    AlertDialog alert;
 
     private static final String[] INITIAL_PERMS = {
             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -143,11 +151,12 @@ public class FragmentGallery extends Fragment implements OnMapReadyCallback {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-
                 switch ((Integer) view.getTag()) {
                     case R.drawable.ic_baseline_my_location_24px:
+
+                        showDialog();
+
+
                         ((FloatingActionButton) view).setImageDrawable(getResources().getDrawable(R.drawable.ic_close_black_24dp));
                         view.setTag(R.drawable.ic_close_black_24dp);
 
@@ -184,7 +193,8 @@ public class FragmentGallery extends Fragment implements OnMapReadyCallback {
                                 float[] distance = new float[1];
                                 Location.distanceBetween(center.latitude, center.longitude, location.latitude, location.longitude, distance);
                                 if(distance[0]<=3000) {
-                                    map.addMarker(new MarkerOptions().position(center));
+
+                                    map.addMarker(new MarkerOptions().position(center).icon(BitmapDescriptorFactory.fromBitmap(marker_picture)));
                                     // удаляем кнопку check
                                     LinearLayout linearLayout1 = getView().findViewById(R.id.buttons_map);
                                     FloatingActionButton add = getView().findViewById(R.id.addtarget);
@@ -208,6 +218,7 @@ public class FragmentGallery extends Fragment implements OnMapReadyCallback {
                     case R.drawable.ic_close_black_24dp:
                         ((FloatingActionButton) view).setImageDrawable(getResources().getDrawable(R.drawable.ic_baseline_my_location_24px));
                         view.setTag(R.drawable.ic_baseline_my_location_24px);
+                        // удаляем кнопку добавить маркер
                         LinearLayout linearLayout1 = getView().findViewById(R.id.buttons_map);
                         FloatingActionButton add = getView().findViewById(R.id.addtarget);
                         linearLayout1.removeView(add);
@@ -219,10 +230,12 @@ public class FragmentGallery extends Fragment implements OnMapReadyCallback {
 
 
             }
+
         });
         // Inflate the layout for this fragment
         return v;
     }
+
 
     @Override
     public void onResume() {
@@ -285,6 +298,63 @@ public class FragmentGallery extends Fragment implements OnMapReadyCallback {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    private void showDialog() {
+        AlertDialog.Builder adb = new AlertDialog.Builder(getContext());
+        LinearLayout view = (LinearLayout) getLayoutInflater().inflate(R.layout.dialog_title, null);
+        adb.setCustomTitle(view);
+        view = (LinearLayout) getLayoutInflater().inflate(R.layout.dialog, null);
+        adb.setView(view);
+        // Нажата кнопка ДПС
+        ImageButton button = view.findViewById(R.id.dps_button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                marker_picture = BitmapFactory.decodeResource(getResources(), R.raw.dps_icon);
+                alert.dismiss();
+            }
+        });
+
+        // Нажата кнопка Камера
+        button = view.findViewById(R.id.camera_button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                marker_picture = BitmapFactory.decodeResource(getResources(), R.raw.cam);
+                alert.dismiss();
+            }
+        });
+
+        // Нажата кнопка Помощь
+        button = view.findViewById(R.id.help_button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                marker_picture = BitmapFactory.decodeResource(getResources(), R.raw.sos);
+                alert.dismiss();
+            }
+        });
+
+        // Если закрыли диалоговое очко
+        adb.setCancelable(true);
+        adb.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            public void onCancel(DialogInterface dialog) {
+                marker_picture = null;
+                FloatingActionButton fab = getView().findViewById(R.id.fab);
+                fab.setImageDrawable(getResources().getDrawable(R.drawable.ic_baseline_my_location_24px));
+                fab.setTag(R.drawable.ic_baseline_my_location_24px);
+                // удаляем кнопку добавить маркер
+                LinearLayout linearLayout1 = getView().findViewById(R.id.buttons_map);
+                FloatingActionButton add = getView().findViewById(R.id.addtarget);
+                linearLayout1.removeView(add);
+                // удаляем прицел для метки
+                ImageView picture = getView().findViewById(R.id.target);
+                ((FrameLayout) getView()).removeView(picture);
+            }
+        });
+        alert = adb.create();
+        alert.show();
     }
 
     @SuppressLint("MissingPermission")
