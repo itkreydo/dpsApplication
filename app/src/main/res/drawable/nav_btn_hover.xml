@@ -5,7 +5,7 @@
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:gravity="top|left"
             android:alpha="0.7"
-            android:src="@mipmap/ic_mymenu">
+            android:src="@mipmap/ic_ham_pressed">
         </bitmap>
     </item> <!-- pressed -->
     <!--Кнопка гамбургера настройка при нажатии -->

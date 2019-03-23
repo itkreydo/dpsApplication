@@ -12,6 +12,7 @@
         android:layout_marginBottom="60dp"
         android:scrollbars="none"
         android:stackFromBottom="true"
+        android:listSelector="@android:color/transparent"
         android:transcriptMode="alwaysScroll" >
     </ListView>
 
