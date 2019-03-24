@@ -190,27 +190,7 @@ public class FragmentGallery extends Fragment implements OnMapReadyCallback {
                                 LatLng center = map.getCameraPosition().target;
                                 LatLng location = new LatLng(locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER).getLatitude(),
                                         locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER).getLongitude());
-                                float[] distance = new float[1];
-                                Location.distanceBetween(center.latitude, center.longitude, location.latitude, location.longitude, distance);
-                                if(distance[0]<=3000) {
-
-                                    map.addMarker(new MarkerOptions().position(center).icon(BitmapDescriptorFactory.fromBitmap(marker_picture)));
-                                    // удаляем кнопку check
-                                    LinearLayout linearLayout1 = getView().findViewById(R.id.buttons_map);
-                                    FloatingActionButton add = getView().findViewById(R.id.addtarget);
-                                    linearLayout1.removeView(add);
-                                    // меняем картинку у кнопки
-                                    add = getView().findViewById(R.id.fab);
-                                    add.setImageDrawable(getResources().getDrawable(R.drawable.ic_baseline_my_location_24px));
-                                    add.setTag(R.drawable.ic_baseline_my_location_24px);
-                                    // удаляем прицел для метки
-                                    ImageView picture = getView().findViewById(R.id.target);
-                                    ((FrameLayout) getView()).removeView(picture);
-                                }
-                                else {
-                                    Toast.makeText(getContext(),"Вы находитесь слишком далеко от метки", Toast.LENGTH_SHORT).show();
-                                }
-
+                                marker_put(location, center);
                             }
                         });
 
@@ -299,8 +279,8 @@ public class FragmentGallery extends Fragment implements OnMapReadyCallback {
         super.onDetach();
         mListener = null;
     }
-
-    private void showDialog() {
+    // Показываем диалог через нажатие на кнопку "добавить метку"
+    private void showDialog(final LatLng location, final LatLng place) {
         AlertDialog.Builder adb = new AlertDialog.Builder(getContext());
         LinearLayout view = (LinearLayout) getLayoutInflater().inflate(R.layout.dialog_title, null);
         adb.setCustomTitle(view);
@@ -312,6 +292,8 @@ public class FragmentGallery extends Fragment implements OnMapReadyCallback {
             @Override
             public void onClick(View v) {
                 marker_picture = BitmapFactory.decodeResource(getResources(), R.raw.dps_icon);
+                if(location.longitude!=0 && location.latitude!=0 && place.longitude!=0 && place.latitude!=0)
+                    marker_put(location, place);
                 alert.dismiss();
             }
         });
@@ -322,6 +304,8 @@ public class FragmentGallery extends Fragment implements OnMapReadyCallback {
             @Override
             public void onClick(View v) {
                 marker_picture = BitmapFactory.decodeResource(getResources(), R.raw.cam);
+                if(location.longitude!=0 && location.latitude!=0 && place.longitude!=0 && place.latitude!=0)
+                    marker_put(location, place);
                 alert.dismiss();
             }
         });
@@ -332,6 +316,8 @@ public class FragmentGallery extends Fragment implements OnMapReadyCallback {
             @Override
             public void onClick(View v) {
                 marker_picture = BitmapFactory.decodeResource(getResources(), R.raw.sos);
+                if(location.longitude!=0 && location.latitude!=0 && place.longitude!=0 && place.latitude!=0)
+                    marker_put(location, place);
                 alert.dismiss();
             }
         });
@@ -357,6 +343,37 @@ public class FragmentGallery extends Fragment implements OnMapReadyCallback {
         alert.show();
     }
 
+    // Показываем диалог через долгое нажатие по карте
+    private void showDialog() {
+        showDialog(new LatLng(0,0), new LatLng(0,0));
+    }
+    // Ставим маркер на карте
+    private boolean marker_put(LatLng location, LatLng place) {
+        float[] distance = new float[1];
+        Location.distanceBetween(place.latitude, place.longitude, location.latitude, location.longitude, distance);
+        if(distance[0]<=3000) {
+
+            map.addMarker(new MarkerOptions().position(place).icon(BitmapDescriptorFactory.fromBitmap(marker_picture)));
+            // удаляем кнопку check
+            LinearLayout linearLayout1 = getView().findViewById(R.id.buttons_map);
+            FloatingActionButton add = getView().findViewById(R.id.addtarget);
+            linearLayout1.removeView(add);
+            // меняем картинку у кнопки
+            add = getView().findViewById(R.id.fab);
+            add.setImageDrawable(getResources().getDrawable(R.drawable.ic_baseline_my_location_24px));
+            add.setTag(R.drawable.ic_baseline_my_location_24px);
+            // удаляем прицел для метки
+            ImageView picture = getView().findViewById(R.id.target);
+            ((FrameLayout) getView()).removeView(picture);
+            return true;
+        }
+        else {
+            Toast.makeText(getContext(),"Вы находитесь слишком далеко от метки", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+    }
+
+
     @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -366,7 +383,9 @@ public class FragmentGallery extends Fragment implements OnMapReadyCallback {
         map.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(LatLng latLng) {
-                map.addMarker(new MarkerOptions().position(latLng).title("Мусор"));
+                LatLng location = new LatLng(locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER).getLatitude(),
+                        locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER).getLongitude());
+                showDialog(location, latLng);
             }
         });
 
@@ -377,9 +396,6 @@ public class FragmentGallery extends Fragment implements OnMapReadyCallback {
                 .build();
         CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition);
         map.animateCamera(cameraUpdate);
-
-//        requestPermissions(INITIAL_PERMS, 1337);
-//        ActivityCompat.requestPermissions(getActivity(), INITIAL_PERMS, 1337);
     }
 
     private int dp_to_px(int dp) {
