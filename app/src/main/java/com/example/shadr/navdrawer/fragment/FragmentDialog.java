@@ -77,10 +77,10 @@ public class FragmentDialog extends Fragment {
         messagesData = new ArrayList<Message>();
 
         //Генерируем сообщения, потом будем брать из бд
-        for (int i = 1; i < 5; i++) {
+        for (int i = 1; i < 100; i++) {
             User u = new User();
             u.setNickname("Иванов Иван "+i);
-            int type = (i==2) ? Message.TYPE_MESSAGE_SENT : Message.TYPE_MESSAGE_RECEIVED;
+            int type = (i%5==2) ? Message.TYPE_MESSAGE_SENT : Message.TYPE_MESSAGE_RECEIVED;
             m = new Message("Ваш текст для теста Проверка текста. но и не только. Всё, хз что писать!", u, type);
             messagesData.add(m);
         }
