@@ -3,12 +3,15 @@ package com.example.shadr.navdrawer.fragment;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
+import com.example.shadr.navdrawer.MessageListAdapter;
 import com.example.shadr.navdrawer.R;
 import com.example.shadr.navdrawer.MessageAdapter;
 import com.example.shadr.navdrawer.models.Message;
@@ -36,10 +39,12 @@ public class FragmentDialog extends Fragment {
     private String mParam1;
     private String mParam2;
     // имена атрибутов для Map
-    ListView lvSimple;
-    SimpleAdapter sAdapter;
+
     MessageAdapter mAdapter;
     ArrayList<Message> messagesData;
+    private RecyclerView mMessageRecycler;
+    private MessageListAdapter mMessageAdapter;
+
     Message m;
     private OnFragmentInteractionListener mListener;
 
@@ -77,7 +82,7 @@ public class FragmentDialog extends Fragment {
         messagesData = new ArrayList<Message>();
 
         //Генерируем сообщения, потом будем брать из бд
-        for (int i = 1; i < 100; i++) {
+        for (int i = 1; i < 1000; i++) {
             User u = new User();
             u.setNickname("Иванов Иван "+i);
             int type = (i%5==2) ? Message.TYPE_MESSAGE_SENT : Message.TYPE_MESSAGE_RECEIVED;
@@ -85,9 +90,7 @@ public class FragmentDialog extends Fragment {
             messagesData.add(m);
         }
 
-
-        //Создаем свой кастомизированный адаптер
-        mAdapter = new MessageAdapter(getContext(), messagesData);
+        mMessageAdapter = new MessageListAdapter(getContext(), messagesData);
 
         // определяем список и присваиваем ему адаптер
 
@@ -96,11 +99,12 @@ public class FragmentDialog extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.chat, container, false);
-        lvSimple = (ListView) v.findViewById(R.id.lv);
-        lvSimple.setDivider(null);
-        lvSimple.setAdapter(mAdapter);
-        // Inflate the layout for this fragment
+        View v = inflater.inflate(R.layout.chat_recycler_view, container, false);
+        mMessageRecycler = (RecyclerView) v.findViewById(R.id.reyclerview_message_list);
+        LinearLayoutManager linlayoutManager = new LinearLayoutManager(getContext());
+        linlayoutManager.setStackFromEnd(true);
+        mMessageRecycler.setLayoutManager(linlayoutManager);
+        mMessageRecycler.setAdapter(mMessageAdapter);
         return v;
 
     }
@@ -112,16 +116,6 @@ public class FragmentDialog extends Fragment {
         }
     }
 
-//    @Override
-//    public void onAttach(Context context) {
-//        super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
-//    }
 
     @Override
     public void onDetach() {

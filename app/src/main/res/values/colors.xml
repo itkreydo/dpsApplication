@@ -15,5 +15,6 @@
     <color name="colorMessageText">#2B2B2B</color>
     <color name="colorMessageSentBackground">@color/colorMessageSentBackgroundBlue</color>
     <color name="colorMessageRecievedBackground">#F7F7F7</color>
+    <color name="colorEditTextChat">#eeeeee</color>
 
 </resources>
