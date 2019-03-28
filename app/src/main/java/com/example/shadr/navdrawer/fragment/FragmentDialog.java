@@ -90,7 +90,9 @@ public class FragmentDialog extends Fragment {
             messagesData.add(m);
         }
 
-        mMessageAdapter = new MessageListAdapter(getContext(), messagesData);
+
+        //Создаем свой кастомизированный адаптер
+        mAdapter = new MessageAdapter(getContext(), messagesData);
 
         // определяем список и присваиваем ему адаптер
 
