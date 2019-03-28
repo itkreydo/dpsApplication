@@ -8,27 +8,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
 
 import com.example.shadr.navdrawer.MessageListAdapter;
 import com.example.shadr.navdrawer.R;
-import com.example.shadr.navdrawer.MessageAdapter;
 import com.example.shadr.navdrawer.models.Message;
 import com.example.shadr.navdrawer.models.User;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link FragmentDialog.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link FragmentDialog#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class FragmentDialog extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -40,7 +27,6 @@ public class FragmentDialog extends Fragment {
     private String mParam2;
     // имена атрибутов для Map
 
-    MessageAdapter mAdapter;
     ArrayList<Message> messagesData;
     private RecyclerView mMessageRecycler;
     private MessageListAdapter mMessageAdapter;
@@ -52,14 +38,7 @@ public class FragmentDialog extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment FragmentDialog.
-     */
+
     // TODO: Rename and change types and number of parameters
     public static FragmentDialog newInstance(String param1, String param2) {
         FragmentDialog fragment = new FragmentDialog();
@@ -90,12 +69,8 @@ public class FragmentDialog extends Fragment {
             messagesData.add(m);
         }
 
-
         //Создаем свой кастомизированный адаптер
-        mAdapter = new MessageAdapter(getContext(), messagesData);
-
-        // определяем список и присваиваем ему адаптер
-
+        mMessageAdapter = new MessageListAdapter(getContext(), messagesData);
     }
 
     @Override
@@ -125,16 +100,6 @@ public class FragmentDialog extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);

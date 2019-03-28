@@ -11,7 +11,6 @@ import android.widget.TextView;
 import com.example.shadr.navdrawer.models.Message;
 
 import java.util.List;
-
 public class MessageListAdapter extends RecyclerView.Adapter {
 
     private Context mContext;
