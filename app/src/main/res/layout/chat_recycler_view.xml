@@ -47,26 +47,31 @@
 
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
             android:layout_gravity="center"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="3dp"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:maxLines="6"/>
-
-        <Button
+        <!--?attr/selectableItemBackground-->
+        <ImageButton
             android:id="@+id/button_chatbox_send"
-            android:text="SEND"
-            android:textSize="14dp"
-            android:background="?attr/selectableItemBackground"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_gravity="bottom"
+            android:background="@drawable/rounded_send_button"
             android:clickable="true"
-            android:layout_width="64dp"
-            android:layout_height="48dp"
-            android:gravity="center"
-            android:layout_gravity="bottom" />
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
+            android:layout_marginRight="8dp"
+            android:src="@drawable/ic_arrow_up"
+            android:text="SEND"
+            android:textSize="14dp" />
 
     </LinearLayout>
 
