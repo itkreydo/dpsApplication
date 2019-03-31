@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.example.shadr.navdrawer.MessageListAdapter;
 import com.example.shadr.navdrawer.R;
@@ -19,6 +20,7 @@ import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -74,7 +76,7 @@ public class FragmentDialog extends Fragment {
         Nickname = "dimon";
 
         try {
-            socket = IO.socket("http://192.168.0.144:3000");
+            socket = IO.socket("http://172.16.115.144:3000");
             socket.connect();
             socket.emit("join", Nickname);
         }
@@ -107,8 +109,8 @@ public class FragmentDialog extends Fragment {
                 m = new Message(messagetxt.getText().toString(), u, Message.TYPE_MESSAGE_SENT);
                 messagesData.add(m);
                 mMessageAdapter.notifyDataSetChanged();
-
-                messagetxt.setText(" ");
+                mMessageRecycler.smoothScrollToPosition(mMessageAdapter.getItemCount() - 1);
+                messagetxt.setText("");
             }
         });
 
@@ -123,6 +125,25 @@ public class FragmentDialog extends Fragment {
                             int type = Message.TYPE_MESSAGE_RECEIVED;
                             m = new Message(data.getString("message"), u, type);
                             messagesData.add(m);mMessageAdapter.notifyDataSetChanged();
+                            mMessageRecycler.smoothScrollToPosition(mMessageAdapter.getItemCount() - 1);
+                        }
+                        catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+
+        });
+        socket.on("updateDialog", new Emitter.Listener() {
+            @Override public void call(final Object... args) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override public void run() {
+                        String datastr = args[0].toString();
+                        try {
+                            JSONObject data = (JSONObject) new JSONObject(datastr);
+                           messagesData.addAll(Message.convertJson(data.getJSONArray("messages")));
+                           mMessageAdapter.notifyDataSetChanged();
                         }
                         catch (JSONException e) {
                             e.printStackTrace();
@@ -134,6 +155,10 @@ public class FragmentDialog extends Fragment {
         return v;
 
     }
+
+    //socket place
+
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -154,6 +179,7 @@ public class FragmentDialog extends Fragment {
         super.onDestroy();
         socket.disconnect();
     }
+
 
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name

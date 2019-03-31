@@ -1,7 +1,13 @@
 package com.example.shadr.navdrawer.models;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class Message {
     public static final int TYPE_MESSAGE_SENT = 1;
@@ -67,4 +73,40 @@ public class Message {
     public void setType(int type) {
         this.type = type;
     }
+
+    public static ArrayList<Message> convertJson(JSONObject jsonArrayMessage){
+        ArrayList<Message> messageList = new ArrayList<Message>();
+        User u;
+        Message m;
+        try {
+            for (int i=0;i<jsonArrayMessage.getJSONArray("messages").length();i++){
+                u = new User();
+                u.setNickname(jsonArrayMessage.getJSONArray("messages").getJSONObject(i).getString("username"));
+                int type = Message.TYPE_MESSAGE_RECEIVED;
+                m = new Message(jsonArrayMessage.getJSONArray("messages").getJSONObject(i).getString("message"), u, type);
+                messageList.add(m);
+            }
+        }catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return messageList;
+    }
+    public static ArrayList<Message> convertJson(JSONArray jsonArrayMessage){
+        ArrayList<Message> messageList = new ArrayList<Message>();
+        User u;
+        Message m;
+        try {
+            for (int i=0;i<jsonArrayMessage.length();i++){
+                u = new User();
+                u.setNickname(jsonArrayMessage.getJSONObject(i).getString("username"));
+                int type = Message.TYPE_MESSAGE_RECEIVED;
+                m = new Message(jsonArrayMessage.getJSONObject(i).getString("message"), u, type);
+                messageList.add(m);
+            }
+        }catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return messageList;
+    }
+
 }
