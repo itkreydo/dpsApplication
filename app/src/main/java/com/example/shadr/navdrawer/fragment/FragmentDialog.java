@@ -77,7 +77,7 @@ public class FragmentDialog extends Fragment {
         Nickname = "dimon";
 
         try {
-            socket = IO.socket("http://172.16.115.144:3000");
+            socket = IO.socket("http://192.168.0.180:3000");
             socket.connect();
             socket.emit("join", Nickname);
         }
