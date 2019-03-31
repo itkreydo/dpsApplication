@@ -103,11 +103,11 @@ public class FragmentDialog extends Fragment {
         sendMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                socket.emit("messagedetection",Nickname,m.getMessage(), m.getDate_time());
 
                 User u = new User();
                 u.setNickname(Nickname);
                 m = new Message(messagetxt.getText().toString(), u, Message.TYPE_MESSAGE_SENT);
+                socket.emit("messagedetection",Nickname,m.getMessage(), m.getDate_time());
 
 
 
