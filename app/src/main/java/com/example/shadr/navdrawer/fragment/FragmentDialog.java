@@ -94,7 +94,7 @@ public class FragmentDialog extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.chat_recycler_view, container, false);
         mMessageRecycler = v.findViewById(R.id.reyclerview_message_list);
-        LinearLayoutManager linlayoutManager = new LinearLayoutManager(getContext());
+        final LinearLayoutManager linlayoutManager = new LinearLayoutManager(getContext());
         linlayoutManager.setStackFromEnd(true);
         mMessageRecycler.setLayoutManager(linlayoutManager);
         mMessageRecycler.setAdapter(mMessageAdapter);
@@ -103,16 +103,19 @@ public class FragmentDialog extends Fragment {
         sendMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                socket.emit("messagedetection",Nickname,m.getMessage(), m.getDate_time());
 
                 User u = new User();
                 u.setNickname(Nickname);
                 m = new Message(messagetxt.getText().toString(), u, Message.TYPE_MESSAGE_SENT);
 
-                socket.emit("messagedetection",Nickname,m.getMessage(), m.getDate_time());
+
 
                 messagesData.add(m);
                 mMessageAdapter.notifyDataSetChanged();
-                mMessageRecycler.smoothScrollToPosition(mMessageAdapter.getItemCount() - 1);
+                if (linlayoutManager.findLastVisibleItemPosition()>=mMessageAdapter.getItemCount() - 3) {
+                    mMessageRecycler.smoothScrollToPosition(mMessageAdapter.getItemCount() - 1);
+                }
                 messagetxt.setText("");
             }
         });
