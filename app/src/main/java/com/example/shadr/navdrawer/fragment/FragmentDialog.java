@@ -113,9 +113,7 @@ public class FragmentDialog extends Fragment {
 
                 messagesData.add(m);
                 mMessageAdapter.notifyDataSetChanged();
-                if (linlayoutManager.findLastVisibleItemPosition()>=mMessageAdapter.getItemCount() - 3) {
-                    mMessageRecycler.smoothScrollToPosition(mMessageAdapter.getItemCount() - 1);
-                }
+                mMessageRecycler.smoothScrollToPosition(mMessageAdapter.getItemCount() - 1);
                 messagetxt.setText("");
             }
         });
@@ -130,8 +128,11 @@ public class FragmentDialog extends Fragment {
                             u.setNickname(data.getString("senderNickname"));
                             int type = Message.TYPE_MESSAGE_RECEIVED;
                             m = new Message(data.getString("message"), u, type);
-                            messagesData.add(m);mMessageAdapter.notifyDataSetChanged();
-                            mMessageRecycler.smoothScrollToPosition(mMessageAdapter.getItemCount() - 1);
+                            messagesData.add(m);
+                            mMessageAdapter.notifyDataSetChanged();
+                            if (linlayoutManager.findLastVisibleItemPosition()>=mMessageAdapter.getItemCount() - 3) {
+                                mMessageRecycler.smoothScrollToPosition(mMessageAdapter.getItemCount() - 1);
+                            }
                         }
                         catch (JSONException e) {
                             e.printStackTrace();
