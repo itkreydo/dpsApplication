@@ -8,12 +8,22 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageButton;
 
 import com.example.shadr.navdrawer.MessageListAdapter;
 import com.example.shadr.navdrawer.R;
 import com.example.shadr.navdrawer.models.Message;
 import com.example.shadr.navdrawer.models.User;
+import com.github.nkzawa.emitter.Emitter;
+import com.github.nkzawa.socketio.client.IO;
+import com.github.nkzawa.socketio.client.Socket;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.net.URISyntaxException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class FragmentDialog extends Fragment {
@@ -33,6 +43,10 @@ public class FragmentDialog extends Fragment {
 
     Message m;
     private OnFragmentInteractionListener mListener;
+
+    private Socket socket;
+    private String Nickname ;
+    private EditText messagetxt ;
 
     public FragmentDialog() {
         // Required empty public constructor
@@ -57,19 +71,18 @@ public class FragmentDialog extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-        // упаковываем данные в понятную для адаптера структуру сообщений
-        messagesData = new ArrayList<Message>();
+        Nickname = "dimon";
 
-        //Генерируем сообщения, потом будем брать из бд
-        for (int i = 1; i < 1000; i++) {
-            User u = new User();
-            u.setNickname("Иванов Иван "+i);
-            int type = (i%5==2) ? Message.TYPE_MESSAGE_SENT : Message.TYPE_MESSAGE_RECEIVED;
-            m = new Message("Ваш текст для теста Проверка текста. но и не только. Всё, хз что писать!", u, type);
-            messagesData.add(m);
+        try {
+            socket = IO.socket("http://192.168.0.144:3000");
+            socket.connect();
+            socket.emit("join", Nickname);
+        }
+        catch (URISyntaxException e) {
+            e.printStackTrace();
         }
 
-        //Создаем свой кастомизированный адаптер
+        messagesData = new ArrayList<Message>();
         mMessageAdapter = new MessageListAdapter(getContext(), messagesData);
     }
 
@@ -77,11 +90,47 @@ public class FragmentDialog extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.chat_recycler_view, container, false);
-        mMessageRecycler = (RecyclerView) v.findViewById(R.id.reyclerview_message_list);
+        mMessageRecycler = v.findViewById(R.id.reyclerview_message_list);
         LinearLayoutManager linlayoutManager = new LinearLayoutManager(getContext());
         linlayoutManager.setStackFromEnd(true);
         mMessageRecycler.setLayoutManager(linlayoutManager);
         mMessageRecycler.setAdapter(mMessageAdapter);
+        ImageButton sendMessage = v.findViewById(R.id.button_chatbox_send);
+        messagetxt = v.findViewById(R.id.edittext_chatbox);
+        sendMessage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                socket.emit("messagedetection",Nickname,messagetxt.getText().toString(), new SimpleDateFormat("H:m"));
+
+                User u = new User();
+                u.setNickname(Nickname);
+                m = new Message(messagetxt.getText().toString(), u, Message.TYPE_MESSAGE_SENT);
+                messagesData.add(m);
+                mMessageAdapter.notifyDataSetChanged();
+
+                messagetxt.setText(" ");
+            }
+        });
+
+        socket.on("message", new Emitter.Listener() {
+            @Override public void call(final Object... args) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override public void run() {
+                        JSONObject data = (JSONObject) args[0];
+                        try {
+                            User u = new User();
+                            u.setNickname(data.getString("senderNickname"));
+                            int type = Message.TYPE_MESSAGE_RECEIVED;
+                            m = new Message(data.getString("message"), u, type);
+                            messagesData.add(m);mMessageAdapter.notifyDataSetChanged();
+                        }
+                        catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+        });
         return v;
 
     }
@@ -98,6 +147,12 @@ public class FragmentDialog extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        socket.disconnect();
     }
 
     public interface OnFragmentInteractionListener {
