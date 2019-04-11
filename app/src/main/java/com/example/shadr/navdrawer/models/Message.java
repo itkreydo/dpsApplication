@@ -1,37 +1,78 @@
 package com.example.shadr.navdrawer.models;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Log;
+import android.widget.Toast;
+
+import com.example.shadr.navdrawer.DownloadImageTask;
+import com.example.shadr.navdrawer.R;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 public class Message {
     public static final int TYPE_MESSAGE_SENT = 1;
     public static final int TYPE_MESSAGE_RECEIVED = 2;
     int type;
     String message;
+    Bitmap bitmap;
     User sender;
     Date date;
-    Date dateCreatedAt;
+    String dateString;
 
 
 
-    public Message(String message, User sender, Date date, Date createdAt) {
+    public Message(String message, User sender, Date date) {
         this.message = message;
         this.sender = sender;
         this.date = date;
-        this.dateCreatedAt = createdAt;
+        this.bitmap = null;
     }
+    public Message(String message, User sender,int type, String date) {
+        this.message = message;
+        this.sender = sender;
+        this.type = type;
+        this.dateString = date;
+        this.date = new Date();
+        this.bitmap = null;
+    }
+
     public Message(String message, User sender,int type) {
         this.message = message;
         this.sender = sender;
         this.type = type;
-        this.date = new Date();
-        this.dateCreatedAt = new Date();
+        java.text.SimpleDateFormat sdf =
+                new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        this.dateString = sdf.format(new Date());
+        this.bitmap = null;
+    }
+
+    public Message(String message, User sender,int type, Bitmap bitmap) {
+        this.message = message;
+        this.sender = sender;
+        this.type = type;
+        java.text.SimpleDateFormat sdf =
+                new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        this.dateString = sdf.format(new Date());
+        this.bitmap = bitmap;
+    }
+    public Message(String message, User sender,int type, Bitmap bitmap, String date) {
+        this.message = message;
+        this.sender = sender;
+        this.type = type;
+        this.dateString = date;
+        this.bitmap = bitmap;
     }
 
 
@@ -51,21 +92,36 @@ public class Message {
         return date;
     }
     public String getDate_time() {
-        SimpleDateFormat formatForDate_time = new SimpleDateFormat("H:m");//2:27
-        return formatForDate_time.format(date);
+        DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        Date dateloc = null;
+        try {
+            dateloc = format.parse(dateString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        SimpleDateFormat formatForDate_time = new SimpleDateFormat("HH:mm");//2:27
+        return formatForDate_time.format(dateloc);
+    }
+    public String getFilename() {
+        DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        Date dateloc = null;
+        try {
+            dateloc = format.parse(dateString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        SimpleDateFormat formatForDate_time = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-");
+        Random rnd = new Random(System.currentTimeMillis());
+        return formatForDate_time.format(dateloc)+String.valueOf(rnd.nextInt(100000))+".jpg";
     }
     public void setDate(Date date) {
         this.date = date;
     }
-    public Date getDateCreatedAt() {
-        return dateCreatedAt;
+    public Bitmap getBitmap() {
+        return bitmap;
     }
-    public void setDateCreatedAt(Date createdAt) {
-        this.dateCreatedAt = createdAt;
-    }
-    public String getDateCreatedAt_time() {
-        SimpleDateFormat formatForDate_time = new SimpleDateFormat("H:m");//2:27
-        return formatForDate_time.format(dateCreatedAt);
+    public void setBitmap(Bitmap bitmap) {
+        this.bitmap = bitmap;
     }
     public int getType() {
         return type;
@@ -91,7 +147,7 @@ public class Message {
         }
         return messageList;
     }
-    public static ArrayList<Message> convertJson(JSONArray jsonArrayMessage){
+    public static ArrayList<Message> convertJson(JSONArray jsonArrayMessage, Bitmap bitmap){
         ArrayList<Message> messageList = new ArrayList<Message>();
         User u;
         Message m;
@@ -100,7 +156,15 @@ public class Message {
                 u = new User();
                 u.setNickname(jsonArrayMessage.getJSONObject(i).getString("username"));
                 int type = Message.TYPE_MESSAGE_RECEIVED;
-                m = new Message(jsonArrayMessage.getJSONObject(i).getString("message"), u, type);
+                if(jsonArrayMessage.getJSONObject(i).has("message")==true) {
+                    m = new Message(jsonArrayMessage.getJSONObject(i).getString("message"), u, type,
+                            jsonArrayMessage.getJSONObject(i).getString("date"));
+                }
+                else {
+                    m = new Message(jsonArrayMessage.getJSONObject(i).getString("file").split("/")[1],
+                            u, type, bitmap,
+                            jsonArrayMessage.getJSONObject(i).getString("date"));
+                }
                 messageList.add(m);
             }
         }catch (JSONException e) {
