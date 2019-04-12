@@ -113,7 +113,7 @@ public class FragmentDialog extends Fragment {
         Nickname = "dimon";
 
         try {
-            socket = IO.socket("http://172.20.10.2:3000");
+            socket = IO.socket("http://192.168.0.144:3000");
             socket.connect();
             socket.emit("join", Nickname);
         }
@@ -192,7 +192,7 @@ public class FragmentDialog extends Fragment {
                                         messagesData.set(index, message);
                                         mMessageAdapter.notifyDataSetChanged();
                                     }
-                                }.execute("http://172.20.10.2:3000/getImage?"+data.getString("file"));
+                                }.execute("http://192.168.0.144:3000/getImage?"+data.getString("file"));
                             }
                             if (linlayoutManager.findLastVisibleItemPosition()>=mMessageAdapter.getItemCount() - 3) {
                                 mMessageRecycler.smoothScrollToPosition(mMessageAdapter.getItemCount() - 1);
@@ -230,7 +230,7 @@ public class FragmentDialog extends Fragment {
                                            messagesData.set(finalI, finalMessage_check);
                                            mMessageAdapter.notifyDataSetChanged();
                                        }
-                                   }.execute("http://172.20.10.2:3000/getImage?"+ messagesData.get(finalI).getMessage());
+                                   }.execute("http://192.168.0.144:3000/getImage?"+ messagesData.get(finalI).getMessage());
                                }
                            }
                         }
@@ -283,7 +283,7 @@ public class FragmentDialog extends Fragment {
                             messagetxt.setText("");
 
 
-                            FilesUploadingTask SendToServer = new FilesUploadingTask("http://172.20.10.2:3000/upload"){
+                            FilesUploadingTask SendToServer = new FilesUploadingTask("http://192.168.0.144:3000/upload"){
                                 @Override
                                 protected void onPostExecute(String result) {
                                     super.onPostExecute(result);
@@ -319,6 +319,20 @@ public class FragmentDialog extends Fragment {
                                 mMessageAdapter.notifyDataSetChanged();
                                 mMessageRecycler.smoothScrollToPosition(mMessageAdapter.getItemCount() - 1);
                                 messagetxt.setText("");
+                                FilesUploadingTask SendToServer = new FilesUploadingTask("http://192.168.0.144:3000/upload"){
+                                    @Override
+                                    protected void onPostExecute(String result) {
+                                        super.onPostExecute(result);
+                                        Log.d("my","in MAIL!!!!!"+result);
+                                    }
+                                };
+                                SendToServer.putTextData("username",m.getSender().getNickname());
+                                java.text.SimpleDateFormat sdf =
+                                        new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                                SendToServer.putTextData("date",sdf.format(new Date()));
+                                SendToServer.putBitmapData(bitmap,m.getFilename());
+                                socket.emit("image");
+                                SendToServer.execute();
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
