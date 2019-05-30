@@ -19,13 +19,15 @@ import android.view.MenuItem;
 import com.example.shadr.navdrawer.fragment.FragmentDialog;
 import com.example.shadr.navdrawer.fragment.FragmentGallery;
 import com.example.shadr.navdrawer.fragment.FragmentSettings;
+import com.vk.sdk.util.VKUtil;
+
+import java.util.Arrays;
 
 public class NavigationDrawer extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 //Состав команды
 //Dima  pidr
 //Igor pidr
-    //hol xyu
     FragmentGallery fgallery;
     FragmentDialog fdialogs;
     FragmentSettings fsettings;
@@ -39,6 +41,10 @@ public class NavigationDrawer extends AppCompatActivity
         setContentView(R.layout.activity_navigation_drawer);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+
+        //String[] fingerprints = VKUtil.getCertificateFingerprint(this, this.getPackageName());
+        //System.out.println(Arrays.asList(fingerprints));
 
         //getSupportActionBar().setDisplayShowTitleEnabled(false);
         //getSupportActionBar().hide();
