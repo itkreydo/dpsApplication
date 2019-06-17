@@ -1,5 +1,8 @@
 package com.example.shadr.navdrawer;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.ColorRes;
 import android.support.constraint.ConstraintLayout;
@@ -13,13 +16,32 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.shadr.navdrawer.fragment.FragmentDialog;
 import com.example.shadr.navdrawer.fragment.FragmentGallery;
 import com.example.shadr.navdrawer.fragment.FragmentSettings;
+import com.vk.sdk.VKSdk;
+import com.vk.sdk.api.VKApi;
+import com.vk.sdk.api.VKApiConst;
+import com.vk.sdk.api.VKError;
+import com.vk.sdk.api.VKParameters;
+import com.vk.sdk.api.VKRequest;
+import com.vk.sdk.api.VKResponse;
+import com.vk.sdk.api.methods.VKApiUsers;
+import com.vk.sdk.api.model.VKApiUser;
+import com.vk.sdk.api.model.VKList;
+import com.vk.sdk.api.model.VKUsersArray;
 import com.vk.sdk.util.VKUtil;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Arrays;
 
@@ -33,7 +55,8 @@ public class NavigationDrawer extends AppCompatActivity
     FragmentSettings fsettings;
 
     FragmentTransaction ftrans;
-
+    TextView username_view;
+    ImageView avatar_view;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +82,57 @@ public class NavigationDrawer extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        View navHeader = navigationView.getHeaderView(0);
+        avatar_view = (ImageView) navHeader.findViewById(R.id.user_avatar);
+        username_view = (TextView) navHeader.findViewById(R.id.user_name);
+        TextView exit_view = (TextView) navHeader.findViewById(R.id.nav_header_exit);
+        exit_view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        //VKRequest request = new VKRequest("account.getProfileInfo");
+        VKRequest request = VKApi.users().get(VKParameters.from(VKApiConst.FIELDS, "photo_100"));
+        request.setPreferredLang("ru");
+        request.executeWithListener(new VKRequest.VKRequestListener() {
+            @Override
+            public void onComplete(VKResponse response) {
+                //Do complete stuff
+                Log.d("1223" ,response.responseString);
+                try {
+                    String name = response.json.getJSONArray("response").getJSONObject(0).getString("first_name");
+                    String lastname = response.json.getJSONArray("response").getJSONObject(0).getString("last_name");
+                    String photoUrl = response.json.getJSONArray("response").getJSONObject(0).getString("photo_100");
+                    getBitmapFromUrl getBitmapFromUrl = new getBitmapFromUrl(getApplicationContext(), photoUrl, avatar_view) {
+                        @Override
+                        protected void onPostExecute(Bitmap bitmap) {
+                            super.onPostExecute(bitmap);
+                            iv.setImageBitmap(bitmap);
+                        }
+                    };
+
+                    getBitmapFromUrl.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                    username_view.setText(lastname+" "+name);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+            }
+            @Override
+            public void onError(VKError error) {
+                //Do error stuff
+            }
+            @Override
+            public void attemptFailed(VKRequest request, int attemptNumber, int totalAttempts) {
+                //I don't really believe in progress
+            }
+        });
+        //TextView profession_view = (TextView) navHeader.findViewById(R.id.profession_title);
+
 
         fgallery = new FragmentGallery();
         fdialogs = new FragmentDialog();
@@ -120,7 +194,10 @@ public class NavigationDrawer extends AppCompatActivity
             getSupportActionBar().setTitle("Настройки");
             ftrans.replace(R.id.container, fsettings);
         } else if (id == R.id.nav_exit) {
-
+            VKSdk.logout();
+            Intent i = new Intent(getApplicationContext(),MainActivity.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(i);
             //ftrans.replace(R.id.container, ftools);
         }
         ftrans.commit();

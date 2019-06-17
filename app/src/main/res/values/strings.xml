@@ -22,4 +22,7 @@
     <string name="settings_nav">Настройки</string>
     <string name="other_item">Социальные сети</string>
     <string name="exit_item">Выйти</string>
+    <string name="vk_login_btn">Авторизация ВК</string>
+    <!--VK API -->
+    <integer name="com_vk_sdk_AppId">6996559</integer>
 </resources>
